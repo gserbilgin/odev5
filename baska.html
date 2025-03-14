@@ -1,0 +1,174 @@
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Liste Oluşturma Uygulaması</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white min-h-screen p-8">
+  <div class="max-w-2xl mx-auto">
+    <h1 class="text-3xl font-bold mb-6">Liste Oluşturma Uygulaması</h1>
+    <div class="flex items-center mb-6">
+      <input
+        id="newListName"
+        type="text"
+        placeholder="Liste Adı Giriniz"
+        class="flex-1 mr-2 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
+      />
+      <button
+        id="createListBtn"
+        class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded"
+      >
+        + Yeni Liste Oluştur
+      </button>
+    </div>
+    <div id="listsContainer" class="space-y-6"></div>
+  </div>
+
+  
+
+  <div
+    id="editModal"
+    class="fixed inset-0 hidden items-center justify-center bg-black bg-opacity-50"
+  >
+    <div class="bg-white rounded shadow p-6 text-gray-900 w-full max-w-md">
+      <h2 class="text-xl font-bold mb-4">Güncelle</h2>
+      <input
+        id="editInput"
+        type="text"
+        class="w-full p-2 border border-gray-300 rounded mb-4"
+      />
+      <div class="flex justify-end space-x-2">
+        <button
+          id="cancelEdit"
+          class="px-4 py-2 rounded bg-gray-500 text-white hover:bg-gray-600"
+        >
+          İptal
+        </button>
+        <button
+          id="saveEdit"
+          class="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700"
+        >
+          Kaydet
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const newListName = document.getElementById("newListName");
+    const createListBtn = document.getElementById("createListBtn");
+    const listsContainer = document.getElementById("listsContainer");
+
+    const editModal = document.getElementById("editModal");
+    const editInput = document.getElementById("editInput");
+    const cancelEdit = document.getElementById("cancelEdit");
+    const saveEdit = document.getElementById("saveEdit");
+
+    let currentItemSpan = null;
+
+    createListBtn.addEventListener("click", () => {
+      const listName = newListName.value.trim();
+      if (listName !== "") {
+        createNewList(listName);
+        newListName.value = "";
+      }
+    });
+
+    function createNewList(name) {
+      const listWrapper = document.createElement("div");
+      listWrapper.className = "bg-gray-800 p-4 rounded shadow";
+
+      const listTitle = document.createElement("h2");
+      listTitle.className = "text-xl font-bold mb-4";
+      listTitle.textContent = name;
+
+      const addItemContainer = document.createElement("div");
+      addItemContainer.className = "flex items-center mb-4";
+
+      const addItemInput = document.createElement("input");
+      addItemInput.type = "text";
+      addItemInput.placeholder = "Liste İçeriği Giriniz";
+      addItemInput.className = "flex-1 mr-2 p-2 rounded focus:outline-none focus:ring-2 focus:ring-green-500 text-gray-900";
+
+      const addItemButton = document.createElement("button");
+      addItemButton.textContent = "Ekle";
+      addItemButton.className = "bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded";
+
+      addItemContainer.appendChild(addItemInput);
+      addItemContainer.appendChild(addItemButton);
+
+      const itemsContainer = document.createElement("ul");
+      itemsContainer.className = "space-y-2";
+
+      addItemButton.addEventListener("click", () => {
+        const itemText = addItemInput.value.trim();
+        if (itemText !== "") {
+          createListItem(itemText, itemsContainer);
+          addItemInput.value = "";
+        }
+      });
+
+      listWrapper.appendChild(listTitle);
+      listWrapper.appendChild(addItemContainer);
+      listWrapper.appendChild(itemsContainer);
+      listsContainer.appendChild(listWrapper);
+    }
+
+    function createListItem(text, parentContainer) {
+      const listItem = document.createElement("li");
+      listItem.className = "flex justify-between items-center bg-gray-700 p-2 rounded";
+
+      const itemTextSpan = document.createElement("span");
+      itemTextSpan.textContent = text;
+
+      const buttonContainer = document.createElement("div");
+      buttonContainer.className = "flex space-x-2";
+
+      const updateButton = document.createElement("button");
+      updateButton.textContent = "Güncelle";
+      updateButton.className = "bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-1 rounded";
+
+      const deleteButton = document.createElement("button");
+      deleteButton.textContent = "Sil";
+      deleteButton.className = "bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded";
+
+      deleteButton.addEventListener("click", () => {
+        itemTextSpan.classList.add("line-through", "text-red-500", "font-bold");
+        updateButton.disabled = true;
+        deleteButton.disabled = true;
+      });
+
+      updateButton.addEventListener("click", () => {
+        currentItemSpan = itemTextSpan;
+        editInput.value = itemTextSpan.textContent;
+        editModal.classList.remove("hidden");
+        editModal.classList.add("flex");
+      });
+
+      buttonContainer.appendChild(updateButton);
+      buttonContainer.appendChild(deleteButton);
+
+      listItem.appendChild(itemTextSpan);
+      listItem.appendChild(buttonContainer);
+      parentContainer.appendChild(listItem);
+    }
+
+    cancelEdit.addEventListener("click", () => {
+      editModal.classList.add("hidden");
+      editModal.classList.remove("flex");
+    });
+
+    saveEdit.addEventListener("click", () => {
+      const newText = editInput.value.trim();
+      if (newText !== "" && currentItemSpan) {
+        currentItemSpan.textContent = newText;
+      }
+      editModal.classList.add("hidden");
+      editModal.classList.remove("flex");
+    });
+  </script>
+</body>
+</html>

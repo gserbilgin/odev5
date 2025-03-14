@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+    <title>Document</title>
+</head>
+<body class="bg-stone-900 flex justify-center items-center min-h-max">
+    <main class="w-full max-w-2xl bg-blue-900 rounded-xl border-2 border-white p-5">
+        <div class="mb-5">
+            <input id="listInput" class="justify-center items-center bg-gray-400 rounded p-1 h-10 w-full" placeholder="New list name...">
+            <button id="createListM" class="justify-center items-center text-white rounded mt-3 py-2 px-2 h-10 w-full bg-gray-500">Create New List</button>
+        </div>
+        <div id="listContainer" class="w-full mt-5"></div>
+    </main>
+
+    <script>
+        const listInput1 = document.getElementById("listInput");
+        const createList = document.getElementById("createListM");
+        const listContainer = document.getElementById("listContainer");
+
+        function newList() {
+            const listName = listInput1.value.trim();
+            if (!listName) {
+                alert("Please enter a valid list name.");
+                return;
+            }
+
+            const listWrapper = document.createElement("div");
+            listWrapper.className = "bg-stone-700 p-5 rounded mb-5 w-full";
+
+            const listH1 = document.createElement("h2");
+            listH1.className = "text-xl font-ariel text-white mb-3";
+            listH1.textContent = listName;
+            listWrapper.appendChild(listH1);
+
+            const itemInput = document.createElement("input");
+            itemInput.className = "bg-gray-300 rounded m-2 h-10 w-full";
+            itemInput.placeholder = "Add item to the list...";
+            listWrapper.appendChild(itemInput);
+
+            const addItemButton = document.createElement("button");
+            addItemButton.className = "bg-blue-600 text-white rounded py-2 px-4 mt-2 w-full";
+            addItemButton.textContent = "Add Item";
+            listWrapper.appendChild(addItemButton);
+
+            const itemList = document.createElement("ul");
+            itemList.className = "mt-3";
+            listWrapper.appendChild(itemList);
+
+            addItemButton.addEventListener("click", function() {
+                const itemText = itemInput.value.trim();
+                if (itemText) {
+                    const listItem = document.createElement("li");
+                    listItem.className = "flex justify-between items-center bg-gray-500 p-2 rounded mb-2";
+
+                    const itemTextNode = document.createElement("span");
+                    itemTextNode.textContent = itemText;
+                    listItem.appendChild(itemTextNode);
+
+                    const deleteButton = document.createElement("button");
+                    deleteButton.className = "bg-red-500 text-white py-2 px-2 rounded";
+                    deleteButton.textContent = "Delete";
+                    deleteButton.addEventListener("click", function() {
+                        listItem.remove();
+                    });
+                    const complateButton = document.createElement("button");
+                    complateButton.className = "bg-green-500 text-white py-2 px-3 rounded justify-right";
+                    complateButton.textContent = "Complate";
+                    complateButton.addEventListener("click", function() {
+                        itemTextNode.style.textDecoration = "line-through";
+                    });
+                    listItem.appendChild(complateButton);
+                    listItem.appendChild(deleteButton);
+                    itemList.appendChild(listItem);
+                    itemInput.value = ""; 
+                }
+            });
+
+
+            listContainer.appendChild(listWrapper);
+
+
+            listInput1.value = "";
+        }
+
+        createList.addEventListener("click", newList);
+    </script>
+</body>
+</html>
+
